@@ -53,7 +53,7 @@ const termsAndConditionsInput = document.getElementById("checkbox1");
 const notifyMeInput = document.getElementById("checkbox2");
 const dataError = Array.from(document.querySelectorAll(".formData"));
 const dataSuccess = Array.from(document.querySelectorAll(".formData"));
-
+ 
 // Manipulate error and success messages on form inputs
 
 // Function to show error message
@@ -210,7 +210,7 @@ function validateNotification() {
 
 
 // Main validation function for the entire form
-// This function calls all the individual validation functions and checks whether the form data is valid or not.
+// Fonction de validation du formulaire changement de la modale
 function validate() {
   // Appel fonction validation prénom
   const isFirstNameValid = validateFirstName(firstNameInput);
@@ -293,13 +293,17 @@ document
 function changeModal() {
   const modalFormAfter = document.querySelector(".modal-body");
   modalFormAfter.innerHTML =
-    "<p>Merci pour votre inscription</p><button class='modal-success-btn' onclick='closeModal()'>Fermer</button><span class='close'>";
+    "<p>Merci pour votre inscription</p><button class='modal-success-btn' onclick='closeModal()'>Fermer</button><span class='close' onclick='closeModalAndReload()'>";
 
   const modal = document.querySelector(".modal-body");
   modal.classList.add("modal-success");
   modal.classList.remove("modal-body");
+}
 
-
+// Função para fechar a modal e recarregar a página
+function closeModalAndReload() {
+  closeModal(); // Fecha a modal
+  location.reload(); // Recarrega a página
 }
 
 // Fonction pour valider les inputs
@@ -331,11 +335,8 @@ function validateInput(input) {
 
   if (input.type === "date") {
     const age = calculateAge(birthdateInput);
-    console.log(age);
-    console.log(validateBirthdateFormat(inputValue));
     if (!validateBirthdateFormat(inputValue) || age < 18) {
       formData.setAttribute("data-error-visible", "true");
-      console.log("salut");
       return false;
     } else {
       formData.setAttribute("data-success-visible", "true");

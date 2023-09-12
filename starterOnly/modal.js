@@ -203,34 +203,31 @@ function validateNotification() {
     console.log("Notification not checked");
     return false;
   }
-
   console.log("Notification ok");
   return true;
 }
 
-
 // Main validation function for the entire form
-// Fonction de validation du formulaire changement de la modale
 function validate() {
-  // Appel fonction validation prénom
+  // Calls validation function for First Name
   const isFirstNameValid = validateFirstName(firstNameInput);
-  // Appel fonction validation nom
+  // Calls validation function for Last Name
   const isLastNameValid = validateLastName(lastNameInput);
-  // Appel fonction validation email
+  //   // Calls validation function for email
   const isEmailValid = validateEmail(emailInput);
-  // Appel fonction validation nombre participations
+  //   // Calls validation function for birthdate
   const isBirthdateValid = validateBirthdate(birthdateInput);
-  // Appel fonction validation nombre participations
+  //   // Calls validation function for partipation amount
   const isParticipationQuantityValid =
     validateParticipationQuantity(participationAmount);
-  // Appel fonction validation local
+  //   // Calls validation function for location
   const selectedLocation = validateParticipationLocation(locationInput);
   const isParticipationLocationValid = selectedLocation !== false;
-  // Appel fonction validation termes et conditions
+  //   // Calls validation function for terms & conditions
   const isTermsAndConditionsChecked = validateTermsAndConditions(
     termsAndConditionsInput
   );
-  // Appel fonction validation activation notification
+  //   // Calls validation function for notification
   const isNotificationChecked = validateNotification(notifyMeInput);
 
   if (
@@ -242,7 +239,7 @@ function validate() {
     isParticipationLocationValid &&
     isTermsAndConditionsChecked
   ) {
-    // Exibir o resultado no console
+    // Show the results on console
     function createUserInfo() {
       const userInfo = {
         Prenom: firstNameInput.value,
@@ -263,33 +260,34 @@ function validate() {
     changeModal();
   }
 
+  // Update fields status with error/success messages 
   let isValid = true;
 
   document
     .querySelectorAll(
-      '.text-control, [type="email"], [type="date"], [type="number"]'
+      '.text-control, [type="email"], [type="date"], [type="number"], [type="checkbox"], [type="radio"]'
     )
     .forEach((input) => {
       if (!validateInput(input)) {
         isValid = false;
-        updateFieldStatus(input); // Atualiza as mensagens de erro/sucesso
+        updateFieldStatus(input); //Update error/success messages
       }
     });
 
   return isValid;
 }
 
-// Ajouter un evenement de clique dans le bouton d'envoi du formulaire
+// Add a click event in the form submit button
 document
   .querySelector(".btn-submit")
   .addEventListener("click", function (event) {
-    event.preventDefault(); // Evita que o formulário seja enviado
+    event.preventDefault(); // Prevents the form from being submitted
 
-    // Appel fonction de validation du formulaire
+    // Call form validation function
     validate();
   });
 
-// Fonction pour changer la modale une fois le formulaire validé
+// Function to change the modal once the form has been validated
 function changeModal() {
   const modalFormAfter = document.querySelector(".modal-body");
   modalFormAfter.innerHTML =
@@ -300,13 +298,13 @@ function changeModal() {
   modal.classList.remove("modal-body");
 }
 
-// Função para fechar a modal e recarregar a página
+// function to close the modal and reload the page
 function closeModalAndReload() {
-  closeModal(); // Fecha a modal
-  location.reload(); // Recarrega a página
+  closeModal(); // Closes the modal
+  location.reload(); // reload the page
 }
 
-// Fonction pour valider les inputs
+// Function to validate inputs
 const form = document.forms["reserve"];
 
 function validateInput(input) {
@@ -344,13 +342,43 @@ function validateInput(input) {
       formData.removeAttribute("data-error");
       return true;
     }
-  } else {
+  } 
+
+  if (input.type === 'checkbox'){
+    if (!termsAndConditionsInput.checked) {
+      formData.setAttribute("data-error-visible", "true");
+      return false;
+    }else {
+      formData.setAttribute("data-error-visible", "false");
+    }
+  }
+
+  function selectTown(location) {
+    for (const locationInput of location) {
+      if (locationInput.checked && locationInput.value !== "") {
+        return locationInput.value; // Returns the value of the selected input
+      }
+    }
+    
+    return false; // Returns false if no city is selected
+  }
+  
+  if (input.type === 'radio') {
+    const selectedLocation = selectTown(locationInput);
+    if (selectedLocation !== false) {
+      formData.setAttribute("data-error-visible", "false");
+    } else {
+      formData.setAttribute("data-error-visible", "true");
+    }
+  }
+  
+    else {
     formData.removeAttribute("data-error");
     return true;
   }
 }
 
-// Fonction pour montrer les messages d'erreur/succes dans les champs/inputs
+// Function to show error/success messages in fields/inputs
 function updateFieldStatus(input) {
   if (validateInput(input)) {
     input.closest(".formData").setAttribute("data-success-visible", "true");
@@ -359,10 +387,10 @@ function updateFieldStatus(input) {
   }
 }
 
-// Evenement pour valider les champs en modifiant les valeurs
+// Event to validate fields by modifying values
 document
   .querySelectorAll(
-    '.text-control, [type="email"], [type="date"], [type="number"]'
+    '.text-control, [type="email"], [type="date"], [type="number"], [type="checkbox"], [type="radio"]'
   )
   .forEach((input) => {
     input.addEventListener("input", () => {
@@ -370,13 +398,13 @@ document
     });
   });
 
-// Evenement pour valider tous les champs avant l'envoi du formulaire
+// Event to validate all fields before sending the form
 form.addEventListener("submit", (event) => {
   let isValid = true;
 
   document
     .querySelectorAll(
-      '.text-control, [type="email"], [type="date"], [type="number"]'
+      '.text-control, [type="email"], [type="date"], [type="number"], [type="checkbox"], [type="radio"]'
     )
     .forEach((input) => {
       if (!validateInput(input)) {
@@ -389,13 +417,13 @@ form.addEventListener("submit", (event) => {
   }
 });
 
-// Fonction pour valider le format de email
+// Function to validate email format
 function validateEmailFormat(email) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
 }
 
-// Fonction pour valider le format birthdate
+// Function to validate birthdate format
 function validateBirthdateFormat(birthdate) {
   const birthdateFormat = /^\d{4}-\d{2}-\d{2}$/;
   return birthdateFormat.test(birthdate);
